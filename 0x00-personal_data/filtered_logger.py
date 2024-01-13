@@ -13,14 +13,15 @@ PII_FIELDS = ('name', 'email', 'password', 'ssn', 'phone')
 
 def filter_datum(fields: List[str],
                  redaction: str,
-                 message: str, 
-                 seperator:str) -> str:
+                 message: str,
+                 separator: str) -> str:
     """Obfuscate fields in message with redaction
     """
-    message = message.replace(seperator, ' ')
     for field in fields:
-        message = str(re.sub(field + '=(\w|\()(\w|\/|@|\.|\-|\(|\)|)*', field + '=' + redaction, message))
-    return message.replace(' ', seperator)
+        message = re.sub(f'{field}=.*?{separator}',
+                         f'{field}={redaction}{separator}',
+                         message)
+    return message
 
 
 class RedactingFormatter(logging.Formatter):
@@ -36,7 +37,10 @@ class RedactingFormatter(logging.Formatter):
         RedactingFormatter.FIELDS = fields
 
     def format(self, record: logging.LogRecord) -> str:
-        string = filter_datum(self.FIELDS, self.REDACTION, record.getMessage(), self.SEPARATOR)
+        string = filter_datum(self.FIELDS,
+                              self.REDACTION,
+                              record.getMessage(),
+                              self.SEPARATOR)
         return str(self.FORMAT % {'name': record.name,
                                   'levelname': record.levelname,
                                   'asctime': datetime.utcnow(),
@@ -46,13 +50,13 @@ class RedactingFormatter(logging.Formatter):
 def get_logger() -> logging.Logger:
     """Create a logger
     """
-    logger = logging.getLogger('user_data') # Get logger object
-    logger.propagate = False # propagate is true by default, set false
-    logger.setLevel(logging.INFO) # set logger level
-    stream_handler = logging.StreamHandler() # create stream handler object 
-    formatter = RedactingFormatter(fields=PII_FIELDS) # create formatter instance
-    stream_handler.setFormatter(formatter) # set handler's formatter
-    logger.addHandler(stream_handler) # set logger handler(s)
+    logger = logging.getLogger('user_data')  # Get logger object
+    logger.propagate = False  # propagate is true by default, set false
+    logger.setLevel(logging.INFO)  # set logger level
+    stream_handler = logging.StreamHandler()  # create stream handler object
+    formatter = RedactingFormatter(fields=PII_FIELDS)  # Formatter instance
+    stream_handler.setFormatter(formatter)  # set handler's formatter
+    logger.addHandler(stream_handler)  # set logger handler(s)
     return logger
 
 
@@ -82,7 +86,7 @@ def main():
     for row in cursor:
         attr_list = []
         attr_str = ''
-        for k,v in row.items():
+        for k, v in row.items():
             attr_str = f'{k}={v}'
             attr_list.append(attr_str)
         filter_input = RedactingFormatter.SEPARATOR.join(attr_list)
