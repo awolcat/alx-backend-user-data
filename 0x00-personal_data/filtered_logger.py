@@ -4,13 +4,17 @@ import re
 import logging
 import os
 import mysql.connector
+from typing import List
 from datetime import datetime
 
 
 PII_FIELDS = ('name', 'email', 'password', 'ssn', 'phone')
 
 
-def filter_datum(fields, redaction, message, seperator):
+def filter_datum(fields: List[str],
+                 redaction: str,
+                 message: str, 
+                 seperator:str) -> str:
     """Obfuscate fields in message with redaction
     """
     message = message.replace(seperator, ' ')
@@ -27,7 +31,7 @@ class RedactingFormatter(logging.Formatter):
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
     SEPARATOR = ";"
 
-    def __init__(self, fields):
+    def __init__(self, fields: List[str]):
         super(RedactingFormatter, self).__init__(self.FORMAT)
         RedactingFormatter.FIELDS = fields
 
@@ -39,7 +43,7 @@ class RedactingFormatter(logging.Formatter):
                                   'message': string})
 
 
-def get_logger():
+def get_logger() -> logging.Logger:
     """Create a logger
     """
     logger = logging.getLogger('user_data') # Get logger object
@@ -52,7 +56,7 @@ def get_logger():
     return logger
 
 
-def get_db():
+def get_db() -> mysql.connector.connection.MySQLConnection:
     """Get db credentials from environment
         and return mysql db connection object
         for said db credentials
@@ -87,4 +91,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
