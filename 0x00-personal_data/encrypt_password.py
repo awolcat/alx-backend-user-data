@@ -3,7 +3,7 @@
 import bcrypt
 
 
-def hash_password(pwd):
+def hash_password(pwd: str) -> bytes:
     """Hash user passwords.
         They should never be stored
         in plain text
