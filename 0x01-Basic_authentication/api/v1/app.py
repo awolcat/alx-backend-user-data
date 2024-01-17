@@ -32,12 +32,11 @@ def is_request_allowed():
                           '/api/v1/forbidden/'
                          ]
         requires_auth = auth.require_auth(request.path, excluded_paths)
-        if not requires_auth:
-            pass
-        elif auth.authorization_header(request) is None:
-            abort(401)
-        elif auth.current_user(request) is None:
-            abort(403)
+        if requires_auth:
+            if auth.authorization_header(request) is None:
+                abort(401)
+            if auth.current_user(request) is None:
+                abort(403)
 
 
 @app.errorhandler(404)
