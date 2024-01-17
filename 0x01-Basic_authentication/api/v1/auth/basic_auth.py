@@ -34,16 +34,16 @@ class BasicAuth(Auth):
         # print(f'decode {base64_authorization_header}')
         try:
             header = base64_authorization_header.encode('utf-8')
-            header = base64.b64decode(header)  # raises binascii.Error padding issue
+            header = base64.b64decode(header)  # raises binascii.Error-padding
             return header.decode('utf-8')  # decode bytes obj to str
         except Exception:
             return None
 
     def extract_user_credentials(self,
                                  decoded_base64_authorization_header: str
-                                ) -> (str, str):
+                                 ) -> (str, str):
         """Extract user credentials from decoded authorization header
-            
+
             Remember, Basic Authentication sets the Authorization header
             to the base64 encoding of username:password
         """
@@ -74,7 +74,7 @@ class BasicAuth(Auth):
         except Exception:
             return None
 
-    def current_user(self, request=None) ->TypeVar('User'):
+    def current_user(self, request=None) -> TypeVar('User'):
         """Get current user from request
         """
         header = self.authorization_header(request)
