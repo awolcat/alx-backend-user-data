@@ -22,13 +22,13 @@ def login():
         return jsonify({'error': 'password missing'}), 400
     users = User.search({'email': email})
     if len(users) == 0:
-        return jsonify({ "error": "no user found for this email" }), 404
+        return jsonify({'error': 'no user found for this email'}), 404
     user = None
     for user_obj in users:
         if user_obj.is_valid_password(password):
             user = user_obj
     if user is None:
-        return jsonify({ "error": "wrong password" }), 401
+        return jsonify({'error': 'wrong password'}), 401
     from api.v1.app import auth
     session_id = auth.create_session(user.id)
     response = make_response(user.to_json())
