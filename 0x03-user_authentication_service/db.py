@@ -14,7 +14,7 @@ class DB:
     """DB class
     """
 
-    USER_ATTRIBUTES = ['email', 'hashed_password',
+    USER_ATTRIBUTES = ['id', 'email', 'hashed_password',
                        'session_id', 'reset_token']
     
     def __init__(self) -> None:
@@ -42,7 +42,7 @@ class DB:
         self._session.commit()
         return user
 
-    def check_attrs(self, **kwargs):
+    def check_attrs(self, **kwargs) -> bool:
         """Check allowed user attributes
         """
         for attr in kwargs.keys():
@@ -61,11 +61,11 @@ class DB:
         # propagates to InvalidRequestError if unhandled
         return result
 
-    def update_user(self, id, **kwargs):
+    def update_user(self, id, **kwargs) -> None:
         """Update user attributes
         """
         if not self.check_attrs(**kwargs):
             raise ValueError
-        users = User.__table__
-        users.update().where(users.c.id==id).values(**kwargs)
+        user = self.find_user_by(id=id)
+        user.__dict__.update(**kwargs)
         self._session.commit()
