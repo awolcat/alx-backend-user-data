@@ -67,5 +67,7 @@ class DB:
         if not self.check_attrs(**kwargs):
             raise ValueError
         user = self.find_user_by(id=id)
+        if 'id' in kwargs.keys():
+            del kwargs['id']
         user.__dict__.update(**kwargs)
         self._session.commit()
