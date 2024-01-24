@@ -16,7 +16,7 @@ class DB:
 
     USER_ATTRIBUTES = ['id', 'email', 'hashed_password',
                        'session_id', 'reset_token']
-    
+
     def __init__(self) -> None:
         """Initialize a new DB instance
         """
