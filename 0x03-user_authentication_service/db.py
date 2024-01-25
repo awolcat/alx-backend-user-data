@@ -71,3 +71,4 @@ class DB:
             del kwargs['id']
         user.__dict__.update(**kwargs)
         self._session.commit()
+        return None
